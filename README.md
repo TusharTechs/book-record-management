@@ -3,7 +3,7 @@
 This is a book record management API Backend for the management of records and books
 
 ## API Documentation link
-https://www.getpostman.com/collections/013bc99a119ec1806f51
+https://documenter.getpostman.com/view/23030309/VV4zRFqn
 
 ## Routes and Endpoints
 
