@@ -1,4 +1,5 @@
 const IssuedBook = require("../dtos/book-dto");
+const IssuedBooksWithFine = require("../dtos/book-dto");
 const { BookModel, UserModel } = require("../models");
 
 exports.getAllBooks = async (req, res) => {
@@ -111,5 +112,74 @@ exports.updateBookById = async (req, res) => {
   return res.status(200).json({
     success: true,
     data: updatedBook,
+  });
+};
+
+exports.getissuedBooksWithFine = async (req, res) => {
+  const users = await UserModel.find({
+    issuedBook: { $exists: true },
+  }).populate("issuedBook");
+
+  const issuedBooks = users.map((each) => new IssuedBooksWithFine(each));
+
+  if (issuedBooks.length === 0)
+    return res.status(404).json({
+      success: false,
+      message: "No books issued yet",
+    });
+
+    const getDateInDays = (data = "") => {
+      let date;
+      if (data === "") {
+        // current date
+        date = new Date();
+      } else {
+        // getting date on basis of data variable
+        date = new Date(data);
+      }
+      let days = Math.floor(date / (1000 * 60 * 60 * 24));
+      return days;
+    };
+  
+    const subscriptionType = (date) => {
+      if (users.subscriptionType === "Basic") {
+        date = date + 90;
+      } else if (users.subscriptionType === "Standard") {
+        date = date + 180;
+      } else if (users.subscriptionType === "Premium") {
+        date = date + 365;
+      }
+      return date;
+    };
+  
+    // Subscription expiration calculation
+    // January 1, 1970, UTC. // milliseconds
+    let returnDate = getDateInDays(users.returnDate);
+    let currentDate = getDateInDays();
+    let subscriptionDate = getDateInDays(users.subscriptionDate);
+    let subscriptionExpiration = subscriptionType(subscriptionDate);
+  
+    const data = {
+      subscriptionExpired: subscriptionExpiration < currentDate,
+      daysLeftForExpiration:
+        subscriptionExpiration <= currentDate
+          ? 0
+          : subscriptionExpiration - currentDate,
+      fine:
+        returnDate < currentDate
+          ? subscriptionExpiration <= currentDate
+            ? 200
+            : 100
+          : 0,
+    };
+
+    const issuedBooksWithFine = {
+      ...data,
+      ...issuedBooks
+  };
+
+  return res.status(200).json({
+    success: true,
+    issuedBooksWithFine,
   });
 };

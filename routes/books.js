@@ -1,7 +1,7 @@
 const express = require("express");
 const { books } = require("../data/books.json");
 const { users } = require("../data/users.json");
-const { getAllBooks, getSingleBookById, getAllIssuedBooks, addNewBook, updateBookById, getSingleBookByName } = require("../controllers/book-controller");
+const { getAllBooks, getSingleBookById, getAllIssuedBooks, addNewBook, updateBookById, getSingleBookByName, getissuedBooksWithFine } = require("../controllers/book-controller");
 
 const router = express.Router();
 
@@ -53,5 +53,15 @@ router.post("/", addNewBook);
  * Data: author, name, genre, price, publisher, id
  */
 router.put("/:id", updateBookById);
+
+/**
+ * Route: /books/issued/withFine
+ * Method: GET
+ * Description: Get all issued books with fine
+ * Access: Public
+ * Parameters: None
+ * Data: author, name, genre, price, publisher, id, issued user, subscription type, subscription date, return date, fine
+ */
+router.get("/issued/withFine", getissuedBooksWithFine);
 
 module.exports = router;

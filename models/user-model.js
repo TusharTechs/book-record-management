@@ -37,6 +37,14 @@ const userSchema = new Schema(
       type: String,
       required: true,
     },
+    subscriptionExpiration: {
+      type: String,
+      required: true,
+    },
+    fine: {
+      type: String,
+      required: true,
+    },
   },
   {
     timestamps: true,

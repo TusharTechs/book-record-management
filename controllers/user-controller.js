@@ -83,9 +83,7 @@ exports.deleteUser = async (req, res) => {
     });
   }
 
-  return res
-    .status(202)
-    .json({ success: true, message: "Deleted the user successfully" });
+  return res.status(202).json({ success: true, message: "Deleted the user successfully" });
 };
 
 exports.getSubscriptionDetailsById = async (req, res) => {
@@ -105,7 +103,7 @@ exports.getSubscriptionDetailsById = async (req, res) => {
       // current date
       date = new Date();
     } else {
-      // getting date on bacis of data variable
+      // getting date on basis of data variable
       date = new Date(data);
     }
     let days = Math.floor(date / (1000 * 60 * 60 * 24));
@@ -136,12 +134,7 @@ exports.getSubscriptionDetailsById = async (req, res) => {
   console.log("Subscription expiry date", subscriptionExpiration);
 
   const data = {
-    ...user._doc,
-    subscriptionExpired: subscriptionExpiration < currentDate,
-    daysLeftForExpiration:
-      subscriptionExpiration <= currentDate
-        ? 0
-        : subscriptionExpiration - currentDate,
+    issuedBook,
     fine:
       returnDate < currentDate
         ? subscriptionExpiration <= currentDate
@@ -150,7 +143,7 @@ exports.getSubscriptionDetailsById = async (req, res) => {
         : 0,
   };
 
-  res.status(200).json({
+ return res.status(200).json({
     success: true,
     data,
   });
